@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model User {
+  id        String    @unique @default(cuid())
+  discordId String    @unique()
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+  plan      Plan?
+}
+
+model Plan {
+  user     User     @relation(fields: [userId], references: [id])
+  userId   String   @unique
+  expireAt DateTime
+}
+
+model Product {
+  owner               User                  @relation(fields: [ownerId], references: [id])
+  ownerId             String                @unique
+  id                  String                @unique @default(cuid())
+  name                String
+  version             String                @default("1.0.0")
+  files               File[]
+  ConsumersOnProducts ConsumersOnProducts[]
+}
+
+model Consumer {
+  id                  String                @unique @default(cuid())
+  hwid                String?
+  ip                  String
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  ConsumersOnProducts ConsumersOnProducts[]
+}
+
+model ConsumersOnProducts {
+  consumer Consumer @relation(fields: [consumerId], references: [id])
+  product  Product  @relation(fields: [productId], references: [id])
+
+  consumerId String @unique
+  productId  String @unique
+
+  @@id([consumerId, productId])
+}
+
+enum sideFile {
+  server
+  client
+  web
+}
+
+model File {
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  id        String   @unique @default(cuid())
+  name      String
+  side      sideFile
+  code      String
+}
