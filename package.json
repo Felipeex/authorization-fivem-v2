@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cfx-api": "^1.1.0",
+    "crypto": "^1.0.1",
     "express": "^4.18.2"
   },
   "devDependencies": {
