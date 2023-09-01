@@ -26,7 +26,7 @@ model Plan {
 
 model Product {
   owner               User                  @relation(fields: [ownerId], references: [id])
-  ownerId             String                @unique
+  ownerId             String
   id                  String                @unique @default(cuid())
   name                String
   version             String                @default("1.0.0")
@@ -37,7 +37,7 @@ model Product {
 model Consumer {
   id                  String                @unique @default(cuid())
   hwid                String?
-  ip                  String
+  ip                  String                @unique()
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
   ConsumersOnProducts ConsumersOnProducts[]
@@ -47,8 +47,8 @@ model ConsumersOnProducts {
   consumer Consumer @relation(fields: [consumerId], references: [id])
   product  Product  @relation(fields: [productId], references: [id])
 
-  consumerId String @unique
-  productId  String @unique
+  consumerId String
+  productId  String
 
   @@id([consumerId, productId])
 }
