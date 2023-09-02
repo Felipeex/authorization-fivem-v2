@@ -134,6 +134,7 @@ interface obfuscateCodeProps {
 }
 
 async function obfuscateCode(name: string, code: string) {
+  if (!name) return;
   const response = await axios.post<obfuscateCodeProps>(
     `${process.env.OBFUSCATE_API!}/v1/obfuscate`,
     {
