@@ -3,6 +3,7 @@ import { fetchServer } from "cfx-api";
 import { createHash } from "crypto";
 import { prisma } from "../../database/client";
 import { $Enums } from "@prisma/client";
+import axios from "axios";
 
 const router = Router();
 
@@ -127,35 +128,57 @@ interface ProductType {
   };
 }
 
-router.post("/install", handleAuthorization, (req: Request, res: Response) => {
-  const { product } = req.body.product as ProductType;
-  const url = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
+interface obfuscateCodeProps {
+  message: string;
+  code: string;
+}
 
-  res.send({
-    message: "Autenticado!",
-    clients: [
-      product.files
-        .filter((index) => index.side === "client")
-        .map(({ name, code }) => {
-          return {
-            name: name + ".lua",
-            code: defaultCodeClient(code),
-          };
-        }),
-    ][0],
-    servers: [
-      product.files
-        .filter((index) => index.side === "server")
-        .map(({ name, code }) => {
-          return {
-            name: name + ".lua",
-            code: defaultCodeServer(url, code),
-          };
-        }),
-    ][0],
-    version: product.version,
-  });
-});
+async function obfuscateCode(name: string, code: string) {
+  const response = await axios.post<obfuscateCodeProps>(
+    `${process.env.OBFUSCATE_API!}/v1/obfuscate`,
+    {
+      token: process.env.OBFUSCATE_TOKEN!,
+      name,
+      code,
+    }
+  );
+
+  return response.data.code;
+}
+
+router.post(
+  "/install",
+  handleAuthorization,
+  async (req: Request, res: Response) => {
+    const { product } = req.body.product as ProductType;
+    const url = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
+
+    res.send({
+      message: "Autenticado!",
+      clients: await Promise.all(
+        product.files
+          .filter((index) => index.side === "client")
+          .map(async ({ name, code }) => {
+            return {
+              name: name + ".lua",
+              code: await obfuscateCode(name, defaultCodeClient(code)),
+            };
+          })
+      ),
+      servers: await Promise.all(
+        product.files
+          .filter((index) => index.side === "server")
+          .map(async ({ name, code }) => {
+            return {
+              name: name + ".lua",
+              code: await obfuscateCode(name, defaultCodeServer(url, code)),
+            };
+          })
+      ),
+      version: product.version,
+    });
+  }
+);
 
 function defaultCodeClient(code?: string) {
   return `
