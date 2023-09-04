@@ -35,6 +35,53 @@ router.post("/", async (req: Request, res: Response) => {
   res.sendStatus(201);
 });
 
+router.post("/plan", async (req: Request, res: Response) => {
+  const { token } = req.body;
+  if (token) {
+    try {
+      const data = verify(token, process.env.JWT_SECRET as string) as any;
+      if (data && data.id && data.days) {
+        const veriftExistPlan = await prisma.user.findUnique({
+          where: { discordId: data.id },
+          include: { plan: { select: { expireAt: true } } },
+        });
+
+        if (!veriftExistPlan?.plan) {
+          await prisma.user.update({
+            where: { discordId: data.id },
+            data: {
+              plan: {
+                create: {
+                  expireAt: new Date(
+                    Date.now() + data.days * 24 * 60 * 60 * 1000
+                  ),
+                },
+              },
+            },
+          });
+        } else {
+          await prisma.user.update({
+            where: { discordId: data.id },
+            data: {
+              plan: {
+                update: {
+                  expireAt: new Date(
+                    Date.now() + data.days * 24 * 60 * 60 * 1000
+                  ),
+                },
+              },
+            },
+          });
+        }
+      } else res.status(400).send({ message: "Token incorrect" });
+    } catch (err) {
+      res.status(400).send({ message: "Not Verify" });
+    }
+  } else {
+    res.status(400).send({ message: "Invalid Token" });
+  }
+});
+
 router.get("/me/plan", jwtVerify, async (req: Request, res: Response) => {
   const { userToken } = req.body;
   if (userToken && userToken.id) {
