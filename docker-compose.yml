@@ -1,0 +1,8 @@
+version: "3"
+services:
+  app:
+    container_name: authorization-fivem-v2
+    restart: always
+    build: .
+    ports:
+      - "5555:5555"
