@@ -19,9 +19,9 @@ jobs:
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: |
         docker build -t authorization-fivem-v2 .
-        docker tag authorization-fivem-v2:latest fivem-shop/authorization-fivem-v2:latest
+        docker tag authorization-fivem-v2:latest felipeex/fivem-shop-authorization-fivem-v2:latest
         docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-        docker push fivem-shop/authorization-fivem-v2:latest
+        docker push felipeex/fivem-shop-authorization-fivem-v2:latest
 
     - name: SSH Deploy
       uses: appleboy/ssh-action@master
@@ -30,6 +30,6 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          docker pull fivem-shop/authorization-fivem-v2:latest
+          docker pull felipeex/fivem-shop-authorization-fivem-v2:latest
           docker-compose down
           docker-compose up -d
