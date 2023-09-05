@@ -1,0 +1,16 @@
+{
+  "apps": [
+    {
+      "name": "authorization-fivem-v2",
+      "script": "./dist/index.js",
+      "instances": "max",
+      "exec_mode": "cluster",
+      "env": {
+        "DATABASE_URL":"mysql://ngh8oqxnrz3rnu874u3l:pscale_pw_CBxCDcnZi3l9JbwmGHn0aXKDWkmQxJImBNgUcPRKtJS@aws.connect.psdb.cloud/fivem-shop-authorization?sslaccept=strict",
+        "OBFUSCATE_API":"http://localhost:4444",
+        "OBFUSCATE_TOKEN":"OSKDIUSDHJFU8Y32W47Hu8bsuyasdgbh732grywbfuhebvgu",
+        "JWT_SECRET":"Si9sj9UD8WHFU9NIUH9suJ98SU87Q3HBFUBWI"
+      }
+    }
+  ]
+}
