@@ -3,8 +3,7 @@
     {
       "name": "authorization-fivem-v2",
       "script": "./dist/index.js",
-      "instances": "max",
-      "exec_mode": "cluster",
+      "instances": 1,
       "env": {
         "DATABASE_URL":"mysql://ngh8oqxnrz3rnu874u3l:pscale_pw_CBxCDcnZi3l9JbwmGHn0aXKDWkmQxJImBNgUcPRKtJS@aws.connect.psdb.cloud/fivem-shop-authorization?sslaccept=strict",
         "OBFUSCATE_API":"http://localhost:4444",
