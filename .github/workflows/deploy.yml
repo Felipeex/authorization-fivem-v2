@@ -30,11 +30,11 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_KEY }}
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        script: |
-          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker pull felipeex/fivem-shop-authorization-fivem-v2:latest
-          docker-compose down
-          docker-compose up -d
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      script: |
+        docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        docker pull felipeex/fivem-shop-authorization-fivem-v2:latest
+        docker-compose down
+        docker-compose up -d
