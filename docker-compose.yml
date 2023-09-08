@@ -1,8 +1,8 @@
-version: "3"
+version: '3'
 services:
   app:
-    container_name: felipeex/fivem-shop-authorization-fivem-v2:latest
+    container_name: authorization-fivem-v2
+    image: felipeex/fivem-shop-authorization-fivem-v2:latest
     restart: always
-    build: .
     ports:
       - "5555:5555"
