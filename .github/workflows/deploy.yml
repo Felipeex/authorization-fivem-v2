@@ -34,7 +34,7 @@ jobs:
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker pull felipeex/fivem-shop-authorization-fivem-v2:latest
           CONTAINER_ID=$(docker create felipeex/fivem-shop-authorization-fivem-v2:latest)
-          docker cp $CONTAINER_ID:/path/to/docker-compose.yml .
+          docker cp $CONTAINER_ID:/app/authorization-fivem-v2/docker-compose.yml .
           docker rm $CONTAINER_ID
           docker-compose down
           docker-compose up -d
