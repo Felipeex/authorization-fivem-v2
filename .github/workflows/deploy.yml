@@ -23,11 +23,12 @@ jobs:
         docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
         docker push felipeex/fivem-shop-authorization-fivem-v2:latest
 
-    - name: SSH Deploy
+    - name: Deploy
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
+        username: ${{ secrets.SSH_USER }}
+        port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_KEY }}
         script: |
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
