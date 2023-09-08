@@ -28,8 +28,7 @@ jobs:
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        port: ${{ secrets.SSH_PORT }}
+        password: ${{ secrets.SSH_PASSWORD }}
         script: |
           docker pull felipeex/fivem-shop-authorization-fivem-v2:latest
           docker-compose down
