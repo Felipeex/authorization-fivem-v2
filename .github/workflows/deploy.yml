@@ -33,5 +33,5 @@ jobs:
         script: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker pull felipeex/fivem-shop-authorization-fivem-v2:latest
-          docker-compose down
-          docker-compose up -d
+          docker-compose -f /app/authorization-fivem-v2 down
+          docker-compose -f /app/authorization-fivem-v2 up -d
