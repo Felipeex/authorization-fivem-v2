@@ -33,6 +33,8 @@ jobs:
         script: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker pull felipeex/fivem-shop-authorization-fivem-v2:latest
-          docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock felipeex/fivem-shop-authorization-fivem-v2
+          CONTAINER_ID=$(docker create felipeex/fivem-shop-authorization-fivem-v2:latest)
+          docker cp $CONTAINER_ID:/path/to/docker-compose.yml .
+          docker rm $CONTAINER_ID
           docker-compose down
           docker-compose up -d
