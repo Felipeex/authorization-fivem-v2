@@ -175,7 +175,7 @@ router.post(
             return {
               name: name + ".lua",
               code: /* await obfuscateCode(name,  */ defaultCodeServer(
-                url,
+                "https://api.fivemshop.com.br/auth/v1/authorization",
                 code
               ) /* ) */,
             };
