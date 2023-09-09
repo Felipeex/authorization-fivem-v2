@@ -154,8 +154,6 @@ router.post(
     const { product } = req.body.product as ProductType;
     const url = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
 
-    console.log(url);
-
     res.send({
       message: "Autenticado!",
       clients: await Promise.all(
@@ -164,7 +162,9 @@ router.post(
           .map(async ({ name, code }) => {
             return {
               name: name + ".lua",
-              code: await obfuscateCode(name, defaultCodeClient(code)),
+              code: /*  await obfuscateCode(name,  */ defaultCodeClient(
+                code
+              ) /* ) */,
             };
           })
       ),
@@ -174,7 +174,10 @@ router.post(
           .map(async ({ name, code }) => {
             return {
               name: name + ".lua",
-              code: await obfuscateCode(name, defaultCodeServer(url, code)),
+              code: /* await obfuscateCode(name,  */ defaultCodeServer(
+                url,
+                code
+              ) /* ) */,
             };
           })
       ),
