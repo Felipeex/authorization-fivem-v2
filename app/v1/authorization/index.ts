@@ -22,7 +22,7 @@ async function handleAuthorization(
   const clientIPPerExpress =
     /* 
     (req.headers["x-forwarded-for"] as string) ||
-    (req.socket.remoteAddress as string); */ "167.250.175.163:30120";
+    (req.socket.remoteAddress as string); */ "167.250.175.184:30120";
 
   if (!KeymasterId || !hwid || !script)
     return res.send({
@@ -153,6 +153,8 @@ router.post(
   async (req: Request, res: Response) => {
     const { product } = req.body.product as ProductType;
     const url = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
+
+    console.log(url);
 
     res.send({
       message: "Autenticado!",
