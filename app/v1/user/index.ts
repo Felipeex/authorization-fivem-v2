@@ -141,4 +141,16 @@ router.get(
   }
 );
 
+router.post("/add-token", async (req: Request, res: Response) => {
+  const { token, guildId } = req.body;
+  const findToken = await prisma.user.findUnique({ where: { token } });
+  if (!findToken) return res.send(false);
+
+  const addToken = await prisma.user.update({
+    where: { token },
+    data: { guildId },
+  });
+  res.send(!!addToken);
+});
+
 export { router as User };
