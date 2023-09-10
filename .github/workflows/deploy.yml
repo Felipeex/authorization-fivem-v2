@@ -35,7 +35,7 @@ jobs:
           docker pull felipeex/fivem-shop-authorization-fivem-v2:latest
           CONTAINER_ID=$(docker create felipeex/fivem-shop-authorization-fivem-v2:latest)
           mkdir authorization-fivem-v2
-          chmod -R 777 /fivem-shop-payments
+          sudo chmod -R 777 fivem-shop-payments
           docker cp $CONTAINER_ID:/app/authorization-fivem-v2/docker-compose.yml /authorization-fivem-v2
           docker rm $CONTAINER_ID
           docker-compose -f /authorization-fivem-v2 down
