@@ -114,4 +114,24 @@ router.get("/me/plan", jwtVerify, async (req: Request, res: Response) => {
   }
 });
 
+router.get(
+  "/me/discordtoken",
+  jwtVerify,
+  async (req: Request, res: Response) => {
+    const { userToken } = req.body;
+
+    if (userToken && userToken.id) {
+      const findDiscordToken = await prisma.user.findUnique({
+        where: { discordId: userToken.id },
+        select: {
+          token: true,
+        },
+      });
+      res.send(findDiscordToken?.token);
+    } else {
+      res.status(400).send({ message: "Token not found" });
+    }
+  }
+);
+
 export { router as User };
