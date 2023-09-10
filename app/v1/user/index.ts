@@ -114,6 +114,13 @@ router.get("/me/plan", jwtVerify, async (req: Request, res: Response) => {
   }
 });
 
+router.post("/exist", async (req: Request, res: Response) => {
+  const { discordId } = req.body;
+  if (discordId)
+    return res.send(!!(await prisma.user.findUnique({ where: { discordId } })));
+  return res.send("discordId not exist");
+});
+
 router.get(
   "/me/discordtoken",
   jwtVerify,
