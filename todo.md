@@ -1,0 +1,3 @@
+[ ] Bloquear rotas, que precisam de assinatura em dia, exemplo: Criação de produto...
+[ ] Ao assinar um plano, validar do lado do servidor, se foi realmente pago.
+[ ] Rate limit em rotas
