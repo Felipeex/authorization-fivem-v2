@@ -131,9 +131,25 @@ router.put("/:id", UserjwtVerify, (req: Request, res: Response) => {
   res.send("update" + id);
 });
 
-router.delete("/:id", UserjwtVerify, (req: Request, res: Response) => {
+router.delete("/:id", UserjwtVerify, async (req: Request, res: Response) => {
   const { id } = req.params;
-  res.send("delete" + id);
+
+  if (!(await prisma.product.findUnique({ where: { id } })))
+    return res.status(400).send({ message: "product not exist." });
+
+  try {
+    await prisma.product.delete({
+      where: {
+        id,
+      },
+    });
+  } catch (err: any) {
+    console.log(err);
+    if (err && err.message) {
+      return res.status(400).send({ message: err.message });
+    }
+  }
+  res.sendStatus(200);
 });
 
 export { router as Product };
