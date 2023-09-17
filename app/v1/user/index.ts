@@ -1,28 +1,12 @@
-import { NextFunction, Request, Response, Router } from "express";
+import { Request, Response, Router } from "express";
 import { verify } from "jsonwebtoken";
 import { prisma } from "../../database/client";
 import { differenceInMilliseconds, intlFormatDistance } from "date-fns";
-export const router = Router();
+import { Product } from "./product/index";
+import { UserjwtVerify } from "../utils/user-jwt-verify";
 
-export function jwtVerify(req: Request, res: Response, next: NextFunction) {
-  const { authorization } = req.headers;
-  if (authorization) {
-    const token = authorization.split(" ")[1] || null;
-    if (token) {
-      try {
-        const data = verify(token, process.env.JWT_SECRET as string);
-        req.body.userToken = data;
-        next();
-      } catch (err) {
-        res.status(400).send({ message: "Not Verify" });
-      }
-    } else {
-      res.status(400).send({ message: "Invalid Token" });
-    }
-  } else {
-    res.status(400).send({ message: "Authorization not found" });
-  }
-}
+export const router = Router();
+router.use("/product", Product);
 
 router.post("/", async (req: Request, res: Response) => {
   const { id, name } = req.body;
@@ -82,7 +66,7 @@ router.post("/plan", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/me/plan", jwtVerify, async (req: Request, res: Response) => {
+router.get("/me/plan", UserjwtVerify, async (req: Request, res: Response) => {
   const { userToken } = req.body;
   if (userToken && userToken.id) {
     const findUser = await prisma.user.findUnique({
@@ -123,7 +107,7 @@ router.post("/exist", async (req: Request, res: Response) => {
 
 router.get(
   "/me/discordtoken",
-  jwtVerify,
+  UserjwtVerify,
   async (req: Request, res: Response) => {
     const { userToken } = req.body;
 
