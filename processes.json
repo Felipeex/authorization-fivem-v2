@@ -5,7 +5,7 @@
       "script": "./dist/index.js",
       "instances": 1,
       "env": {
-        "DATABASE_URL":"mysql://ngh8oqxnrz3rnu874u3l:pscale_pw_CBxCDcnZi3l9JbwmGHn0aXKDWkmQxJImBNgUcPRKtJS@aws.connect.psdb.cloud/fivem-shop-authorization?sslaccept=strict",
+        "DATABASE_URL":"mysql://ngh8oqxnrz3rnu874u3l:pscale_pw_CBxCDcnZi3l9JbwmGHn0aXKDWkmQxJImBNgUcPRKtJS@aws-sa-east-1.connect.psdb.cloud/fivem-shop-authorization?sslaccept=strict",
         "OBFUSCATE_API":"http://localhost:4444",
         "OBFUSCATE_TOKEN":"OSKDIUSDHJFU8Y32W47Hu8bsuyasdgbh732grywbfuhebvgu",
         "JWT_SECRET":"Si9sj9UD8WHFU9NIUH9suJ98SU87Q3HBFUBWI"
