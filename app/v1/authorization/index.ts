@@ -20,8 +20,10 @@ async function handleAuthorization(
 ) {
   const { KeymasterId, hwid, script } = req.body as AuthorizationProps;
   const clientIPPerExpress =
-    (req.headers["x-forwarded-for"] as string) ||
-    (req.socket.remoteAddress as string);
+    req.connection.remoteAddress ||
+    req.socket.remoteAddress ||
+    // @ts-ignore
+    req.connection.socket.remoteAddress;
 
   console.log(clientIPPerExpress);
 
