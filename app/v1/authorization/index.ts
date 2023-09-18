@@ -19,11 +19,7 @@ async function handleAuthorization(
   next: NextFunction
 ) {
   const { KeymasterId, hwid, script } = req.body as AuthorizationProps;
-  const clientIPPerExpress =
-    req.connection.remoteAddress ||
-    req.socket.remoteAddress ||
-    // @ts-ignore
-    req.connection.socket.remoteAddress;
+  const clientIPPerExpress = req.ip;
 
   console.log(clientIPPerExpress);
 
