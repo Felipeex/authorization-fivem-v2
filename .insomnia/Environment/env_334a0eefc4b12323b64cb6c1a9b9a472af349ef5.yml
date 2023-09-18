@@ -1,0 +1,20 @@
+_id: env_334a0eefc4b12323b64cb6c1a9b9a472af349ef5
+type: Environment
+parentId: wrk_aab786ff65c4480189ab02925f8bfc9f
+modified: 1694182668644
+created: 1693246389644
+name: Base Environment
+data:
+  url: http://localhost:5555
+  obfuscate_url: http://localhost:4444
+  payment_url: http://localhost:3232
+  time: "{% now 'unix', '' %}"
+dataPropertyOrder:
+  "&":
+    - url
+    - obfuscate_url
+    - payment_url
+    - time
+color: null
+isPrivate: false
+metaSortKey: 1693246389644
