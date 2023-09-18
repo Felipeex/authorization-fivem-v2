@@ -1,0 +1,22 @@
+_id: env_700a726e27574f24923d2933e0d0b2d3
+type: Environment
+parentId: env_334a0eefc4b12323b64cb6c1a9b9a472af349ef5
+modified: 1694995930237
+created: 1694182601512
+name: New Environment
+data:
+  url: https://api.fivemshop.com.br/auth
+  obfuscate_url: http://62.72.63.72:4444
+  payment_url: https://api.fivemshop.com.br/discord
+  time: "{% now 'unix', '' %}"
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZmVsaXBlZXguIiwiZW1haWwiOiJmM3ppbmgwaGdAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vY2RuLmRpc2NvcmRhcHAuY29tL2F2YXRhcnMvNDMwODA3Mzc3OTkwNjQ3ODEwLzRhMjY4NTJiZDc0ZDRjNThhOGEzMTZlYzNhZDFiNDExLnBuZyIsInN1YiI6IjQzMDgwNzM3Nzk5MDY0NzgxMCIsImlkIjoiNDMwODA3Mzc3OTkwNjQ3ODEwIiwiaWF0IjoxNjk0Mzg4NjI5fQ.mN7YQKb-Ty9KniZTJED1cimsCNcyfz5VNVtSlTdPdi8
+dataPropertyOrder:
+  "&":
+    - url
+    - obfuscate_url
+    - payment_url
+    - time
+    - token
+color: "#48fe97"
+isPrivate: false
+metaSortKey: 1694182601514
