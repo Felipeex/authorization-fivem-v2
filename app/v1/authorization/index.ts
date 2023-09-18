@@ -20,9 +20,8 @@ async function handleAuthorization(
 ) {
   const { KeymasterId, hwid, script } = req.body as AuthorizationProps;
   const clientIPPerExpress =
-    /* 
     (req.headers["x-forwarded-for"] as string) ||
-    (req.socket.remoteAddress as string); */ "167.250.175.184:30120";
+    (req.socket.remoteAddress as string);
 
   if (!KeymasterId || !hwid || !script)
     return res.send({
@@ -32,6 +31,7 @@ async function handleAuthorization(
 
   try {
     const server = await fetchServer(KeymasterId);
+    console.log(server);
     if (!server?.data.connectEndPoints.includes(clientIPPerExpress)) {
       return res.send({
         message:
