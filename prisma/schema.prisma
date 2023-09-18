@@ -62,7 +62,7 @@ enum sideFile {
 }
 
 model File {
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
   id        String   @unique @default(cuid())
   name      String
