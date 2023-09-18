@@ -6,7 +6,6 @@ import {
 import { z } from "zod";
 import { ValidateSchema } from "../../utils/validate-schema";
 import { prisma } from "../../../database/client";
-import { Prisma } from "@prisma/client";
 const router = Router();
 
 const productSchema = z.object({
