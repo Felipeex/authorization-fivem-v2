@@ -1,28 +1,12 @@
-import { NextFunction, Request, Response, Router } from "express";
+import { Request, Response, Router } from "express";
 import { verify } from "jsonwebtoken";
 import { prisma } from "../../database/client";
 import { differenceInMilliseconds, intlFormatDistance } from "date-fns";
-export const router = Router();
+import { Product } from "./product/index";
+import { UserjwtVerify } from "../utils/user-jwt-verify";
 
-export function jwtVerify(req: Request, res: Response, next: NextFunction) {
-  const { authorization } = req.headers;
-  if (authorization) {
-    const token = authorization.split(" ")[1] || null;
-    if (token) {
-      try {
-        const data = verify(token, process.env.JWT_SECRET as string);
-        req.body.userToken = data;
-        next();
-      } catch (err) {
-        res.status(400).send({ message: "Not Verify" });
-      }
-    } else {
-      res.status(400).send({ message: "Invalid Token" });
-    }
-  } else {
-    res.status(400).send({ message: "Authorization not found" });
-  }
-}
+export const router = Router();
+router.use("/product", Product);
 
 router.post("/", async (req: Request, res: Response) => {
   const { id, name } = req.body;
@@ -82,7 +66,7 @@ router.post("/plan", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/me/plan", jwtVerify, async (req: Request, res: Response) => {
+router.get("/me/plan", UserjwtVerify, async (req: Request, res: Response) => {
   const { userToken } = req.body;
   if (userToken && userToken.id) {
     const findUser = await prisma.user.findUnique({
@@ -112,6 +96,45 @@ router.get("/me/plan", jwtVerify, async (req: Request, res: Response) => {
   } else {
     res.status(400).send({ message: "Token not found" });
   }
+});
+
+router.post("/exist", async (req: Request, res: Response) => {
+  const { discordId } = req.body;
+  if (discordId)
+    return res.send(!!(await prisma.user.findUnique({ where: { discordId } })));
+  return res.send("discordId not exist");
+});
+
+router.get(
+  "/me/discordtoken",
+  UserjwtVerify,
+  async (req: Request, res: Response) => {
+    const { userToken } = req.body;
+
+    if (userToken && userToken.id) {
+      const findDiscordToken = await prisma.user.findUnique({
+        where: { discordId: userToken.id },
+        select: {
+          token: true,
+        },
+      });
+      res.send(findDiscordToken?.token);
+    } else {
+      res.status(400).send({ message: "Token not found" });
+    }
+  }
+);
+
+router.post("/add-token", async (req: Request, res: Response) => {
+  const { token, guildId } = req.body;
+  const findToken = await prisma.user.findUnique({ where: { token } });
+  if (!findToken) return res.send(false);
+
+  const addToken = await prisma.user.update({
+    where: { token },
+    data: { guildId },
+  });
+  res.send(!!addToken);
 });
 
 export { router as User };
