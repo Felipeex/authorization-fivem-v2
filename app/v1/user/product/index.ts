@@ -75,6 +75,9 @@ router.get(
             where: {
               id: params.id,
             },
+            include: {
+              files: true,
+            },
           },
         },
       });
@@ -126,14 +129,77 @@ router.post(
   }
 );
 
-router.put("/:id", UserjwtVerify, (req: Request, res: Response) => {
-  const { id } = req.params;
-  res.send("update" + id);
-});
+router.put(
+  "/:id",
+  [UserjwtVerify, ValidateSchema(productSchema)],
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { body }: productType = req;
+
+    if (!(await prisma.product.findUnique({ where: { id } })))
+      return res.status(400).send({ message: "product not exist." });
+
+    try {
+      await prisma.product.update({
+        where: {
+          id,
+        },
+        data: {
+          name: body.name,
+          version: body.version,
+        },
+      });
+
+      body.files.map(async (updateFile) => {
+        // @ts-ignore
+        const updateFileId = updateFile?.id;
+        if (updateFileId) {
+          await prisma.file.update({
+            where: { id: updateFileId },
+            data: {
+              ...updateFile,
+            },
+          });
+        } else {
+          await prisma.product.update({
+            where: {
+              id,
+            },
+            data: {
+              files: {
+                create: {
+                  ...updateFile,
+                },
+              },
+            },
+          });
+        }
+      });
+
+      const allFiles = await prisma.file.findMany({ where: { productId: id } });
+      const filesForDelete = allFiles.filter(
+        (files) =>
+          !body.files.find(
+            (updatedFiles) =>
+              // @ts-ignore
+              updatedFiles.id === files.id
+          )
+      );
+      filesForDelete.map(async (deleteFile) => {
+        await prisma.file.delete({ where: { id: deleteFile.id } });
+      });
+    } catch (err: any) {
+      console.log(err);
+      if (err && err.message) {
+        return res.status(400).send({ message: err.message });
+      }
+    }
+    res.sendStatus(200);
+  }
+);
 
 router.delete("/:id", UserjwtVerify, async (req: Request, res: Response) => {
   const { id } = req.params;
-
   if (!(await prisma.product.findUnique({ where: { id } })))
     return res.status(400).send({ message: "product not exist." });
 
