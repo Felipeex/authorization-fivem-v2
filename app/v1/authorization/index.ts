@@ -21,7 +21,7 @@ async function handleAuthorization(
   const { KeymasterId, hwid, script } = req.body as AuthorizationProps;
   const clientIPPerExpress = req.ip;
 
-  console.log("ipzinho", clientIPPerExpress);
+  console.log("ipzinho", clientIPPerExpress, req.connection.remotePort);
 
   if (!KeymasterId || !hwid || !script)
     return res.send({
