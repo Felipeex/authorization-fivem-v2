@@ -6,7 +6,6 @@ import {
 import { z } from "zod";
 import { ValidateSchema } from "../../utils/validate-schema";
 import { prisma } from "../../../database/client";
-import { Prisma } from "@prisma/client";
 const router = Router();
 
 const productSchema = z.object({
@@ -104,7 +103,7 @@ router.post(
       where: { ownerId: userExist.id, name: body.name },
     });
     if (productExist?.name === body.name)
-      return res.status(400).send({ error: "product name exist" });
+      return res.status(400).send({ error: "product name exist!!!" });
 
     try {
       await prisma.product.create({
