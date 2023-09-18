@@ -37,7 +37,6 @@ jobs:
           mkdir authorization-fivem-v2
           docker cp $CONTAINER_ID:/app/authorization-fivem-v2/docker-compose.yml authorization-fivem-v2
           docker rm $CONTAINER_ID
-          docker-compose stop authorization-fivem-v2
-          docker-compose rm authorization-fivem-v2
+          docker-compose -f authorization-fivem-v2/docker-compose.yml down
           docker-compose -f authorization-fivem-v2/docker-compose.yml up -d
           docker image prune -f
