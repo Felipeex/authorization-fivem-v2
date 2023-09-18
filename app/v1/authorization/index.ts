@@ -23,6 +23,11 @@ async function handleAuthorization(
 
   console.log(clientIPPerExpress);
 
+  const response = await axios.get("https://api.ipify.org?format=json");
+  const publicIp = response.data.ip;
+
+  console.log(publicIp);
+
   if (!KeymasterId || !hwid || !script)
     return res.send({
       message: "^1ERROR: Todos campos precisa ser preenchido.",
