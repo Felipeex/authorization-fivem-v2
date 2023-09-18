@@ -23,6 +23,8 @@ async function handleAuthorization(
     (req.headers["x-forwarded-for"] as string) ||
     (req.socket.remoteAddress as string);
 
+  console.log(clientIPPerExpress);
+
   if (!KeymasterId || !hwid || !script)
     return res.send({
       message: "^1ERROR: Todos campos precisa ser preenchido.",
@@ -31,7 +33,6 @@ async function handleAuthorization(
 
   try {
     const server = await fetchServer(KeymasterId);
-    console.log(server);
     if (!server?.data.connectEndPoints.includes(clientIPPerExpress)) {
       return res.send({
         message:
