@@ -31,11 +31,10 @@ async function handleAuthorization(
     const server = await fetchServer(KeymasterId);
 
     const isExistIp = server?.data.connectEndPoints.map((ip) => {
-      console.log(ip, ip.startsWith(clientIPPerExpress));
       if (ip.startsWith(clientIPPerExpress)) return true;
     });
 
-    if (isExistIp) {
+    if (!isExistIp) {
       return res.send({
         message:
           '^1ERROR: Seu IP não está batendo com seu "KeymasterId", atualize-o',
