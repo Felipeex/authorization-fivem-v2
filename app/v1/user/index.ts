@@ -4,9 +4,11 @@ import { prisma } from "../../database/client";
 import { differenceInMilliseconds, intlFormatDistance } from "date-fns";
 import { Product } from "./product/index";
 import { UserjwtVerify } from "../utils/user-jwt-verify";
+import { Discord } from "./discord";
 
 export const router = Router();
 router.use("/product", Product);
+router.use("/discord", Discord);
 
 router.post("/", async (req: Request, res: Response) => {
   const { id, name } = req.body;
