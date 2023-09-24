@@ -86,6 +86,23 @@ async function handleAuthorization(
   }
 }
 
+router.post("/version", async (req: Request, res: Response) => {
+  const { productId } = req.body;
+
+  if (productId) {
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      select: {
+        version: true,
+      },
+    });
+
+    return res.send(product?.version);
+  }
+
+  return res.status(500).send("productId not found");
+});
+
 router.post("/", handleAuthorization, (req: Request, res: Response) => {
   const { code, time } = req.body;
   const currentDate = new Date();
@@ -154,8 +171,6 @@ router.post(
   handleAuthorization,
   async (req: Request, res: Response) => {
     const { product } = req.body.product as ProductType;
-    const url = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
-
     res.send({
       message: "Autenticado!",
       clients: await Promise.all(
@@ -163,26 +178,53 @@ router.post(
           .filter((index) => index.side === "client")
           .map(async ({ name, code }) => {
             return {
-              name: name + ".lua",
-              code: /*  await obfuscateCode(name,  */ defaultCodeClient(
-                code
-              ) /* ) */,
+              name,
+              code: await obfuscateCode(name, defaultCodeClient(code)),
             };
           })
       ),
       servers: await Promise.all(
         product.files
           .filter((index) => index.side === "server")
-          .map(async ({ name, code }) => {
+          .map(async ({ name, code, productId }) => {
             return {
-              name: name + ".lua",
-              code: /* await obfuscateCode(name,  */ defaultCodeServer(
-                "https://api.fivemshop.com.br/auth/v1/authorization",
-                code
-              ) /* ) */,
+              name,
+              code: await obfuscateCode(
+                name,
+                defaultCodeServer(
+                  "http://localhost:5555/v1/authorization/",
+                  productId,
+                  code
+                )
+              ),
             };
           })
       ),
+      fxmanifest: `fx_version "adamant"
+game "gta5"
+lua54 "yes"
+
+script_version "${product.version}"
+
+server_scripts {"auth/authorization.lua", ${product.files
+        .filter((index) => index.side === "server")
+        .map(({ name }, key) => {
+          if (key === 0) {
+            return `"${name}"`;
+          } else {
+            return `"${name}",`;
+          }
+        })}}
+shared_scripts {"auth/config.lua"}
+client_scripts {${product.files
+        .filter((index) => index.side === "client")
+        .map(({ name }, key) => {
+          if (key === 0) {
+            return `"${name}"`;
+          } else {
+            return `"${name}",`;
+          }
+        })}}`,
       version: product.version,
     });
   }
@@ -202,20 +244,20 @@ function defaultCodeClient(code?: string) {
   `;
 }
 
-function defaultCodeServer(url: string, code?: string) {
+function defaultCodeServer(url: string, productId: string, code?: string) {
   return `CreateThread(function()
   if not (Authorization.isReWritingFunction()) then
       PerformHttpRequest("${url}", function(err, data)
         if (data) then data = json.decode(data) end
           if (data and data["time"]) then
             if ((((Timestamp() / 384.737463463764) * 3847374.63463764) / 38473.746) - data["time"] <= 60) then
-              Authorization.handler(err, data)
+              Authorization.handler(err, data, "${productId}")
               ${code}
             else
               Authorization.print("ERROR:", "Tempo expirado (timeout-script)")
             end
           else
-            Authorization.handler(err, data)
+            Authorization.handler(err, data, "${productId}")
         end
       end, Authorization.Send(tostring(Timestamp()), cb(tostring(Timestamp()))))
     else
