@@ -132,6 +132,10 @@ router.post("/add-token", async (req: Request, res: Response) => {
   const findToken = await prisma.user.findUnique({ where: { token } });
   if (!findToken) return res.send(false);
 
+  const isRegistedGuild = await prisma.user.findUnique({ where: { guildId } });
+  if (isRegistedGuild)
+    return res.send("Esse discord já está registrado em outro token.");
+
   const addToken = await prisma.user.update({
     where: { token },
     data: { guildId },
