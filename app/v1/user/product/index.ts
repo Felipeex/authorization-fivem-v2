@@ -58,6 +58,13 @@ const findProductSchema = z.object({
 type findProductType = z.infer<typeof findProductSchema> &
   Omit<Request, "params">;
 
+router.get("/download/:id", async (req: Request, res: Response) => {
+  res.download(
+    __dirname + "/default-script/script.zip",
+    req.params.id + ".zip"
+  );
+});
+
 router.get(
   "/:id",
   [UserjwtVerify, ValidateSchema(findProductSchema)],
