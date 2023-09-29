@@ -67,5 +67,5 @@ model File {
   id        String   @unique @default(cuid())
   name      String
   side      sideFile
-  code      String
+  code      String   @db.LongText
 }
