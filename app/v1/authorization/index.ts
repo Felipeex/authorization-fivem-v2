@@ -67,6 +67,7 @@ async function handleAuthorization(
           select: {
             version: true,
             files: true,
+            fxmanifest: true
           },
         },
       },
@@ -139,6 +140,7 @@ router.post("/", handleAuthorization, (req: Request, res: Response) => {
 interface ProductType {
   product: {
     version: string;
+    fxmanifest: string
     files: {
       productId: string;
       id: string;
@@ -176,6 +178,7 @@ router.post(
   handleAuthorization,
   async (req: Request, res: Response) => {
     const { product } = req.body.product as ProductType;
+    console.log(product)
     res.send({
       message: "Autenticado!",
       clients: await Promise.all(
@@ -209,6 +212,9 @@ router.post(
 game "gta5"
 lua54 "yes"
 
+shared_scripts {"auth/config.lua"}
+${product.fxmanifest ?? ""}
+
 script_version "${product.version}"
 
 server_scripts {"auth/authorization.lua",${product.files
@@ -216,7 +222,6 @@ server_scripts {"auth/authorization.lua",${product.files
         .map(({ name }) => {
           return `"${name}"`;
         })}}
-shared_scripts {"auth/config.lua"}
 client_scripts {${product.files
         .filter((index) => index.side === "client")
         .map(({ name }) => {
@@ -245,6 +250,7 @@ function defaultCodeServer(url: string, productId: string, code?: string) {
   return `CreateThread(function()
   if not (Authorization.isReWritingFunction()) then
       PerformHttpRequest("${url}", function(err, data)
+        print("Loading...")
         if (data) then data = json.decode(data) end
           if (data and data["time"]) then
             if ((((Timestamp() / 384.737463463764) * 3847374.63463764) / 38473.746) - data["time"] <= 60) then

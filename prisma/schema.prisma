@@ -32,6 +32,7 @@ model Product {
   id                  String                @unique @default(cuid())
   name                String
   version             String                @default("1.0.0")
+  fxmanifest          String?               @db.Text
   files               File[]
   ConsumersOnProducts ConsumersOnProducts[]
 }
