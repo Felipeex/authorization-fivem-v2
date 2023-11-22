@@ -1,9 +1,9 @@
-import { Router, Request, Response, NextFunction } from "express";
-import { fetchServer } from "cfx-api";
-import { createHash } from "crypto";
-import { prisma } from "../../database/client";
 import { $Enums } from "@prisma/client";
 import axios from "axios";
+import { fetchServer } from "cfx-api";
+import { createHash } from "crypto";
+import { NextFunction, Request, Response, Router } from "express";
+import { prisma } from "../../database/client";
 
 const router = Router();
 
@@ -19,7 +19,9 @@ async function handleAuthorization(
   next: NextFunction
 ) {
   const { KeymasterId, hwid, script } = req.body as AuthorizationProps;
-  const clientIPPerExpress = req.ip;
+  const clientIPPerExpress = /* req.ip */ "167.250.175.165";
+
+  console.log(clientIPPerExpress);
 
   if (!KeymasterId || !hwid || !script)
     return res.send({
@@ -154,16 +156,19 @@ interface obfuscateCodeProps {
 
 async function obfuscateCode(name: string, code: string) {
   if (!name) return;
-  const response = await axios.post<obfuscateCodeProps>(
-    `${process.env.OBFUSCATE_API!}/v1/obfuscate`,
-    {
-      token: process.env.OBFUSCATE_TOKEN!,
-      name,
-      code,
-    }
-  );
-
-  return response.data.code;
+  try {
+    const response = await axios.post<obfuscateCodeProps>(
+      `${process.env.OBFUSCATE_API!}/v1/obfuscate`,
+      {
+        token: process.env.OBFUSCATE_TOKEN!,
+        name,
+        code,
+      }
+    );
+    return response.data.code;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 router.post(
@@ -192,7 +197,7 @@ router.post(
               code: await obfuscateCode(
                 name,
                 defaultCodeServer(
-                  "https://api.fivemshop.com.br/auth/v1/authorization/",
+                  "http://localhost:5555/v1/authorization/",
                   productId,
                   code
                 )
@@ -206,24 +211,16 @@ lua54 "yes"
 
 script_version "${product.version}"
 
-server_scripts {"auth/authorization.lua", ${product.files
+server_scripts {"auth/authorization.lua",${product.files
         .filter((index) => index.side === "server")
-        .map(({ name }, key) => {
-          if (key === 0) {
-            return `"${name}"`;
-          } else {
-            return `"${name}",`;
-          }
+        .map(({ name }) => {
+          return `"${name}"`;
         })}}
 shared_scripts {"auth/config.lua"}
 client_scripts {${product.files
         .filter((index) => index.side === "client")
-        .map(({ name }, key) => {
-          if (key === 0) {
-            return `"${name}"`;
-          } else {
-            return `"${name}",`;
-          }
+        .map(({ name }) => {
+          return `"${name}"`;
         })}}`,
       version: product.version,
     });
@@ -284,3 +281,4 @@ function defaultCodeServer(url: string, productId: string, code?: string) {
 }
 
 export { router as Authorization };
+
