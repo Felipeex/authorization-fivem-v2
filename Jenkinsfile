@@ -5,7 +5,7 @@ pipeline {
         stage ("Build Image") {
           steps {
             script {
-              sh 'pm2 start processes.json'
+              dockerapp = docker.build("felipeex/fivem-shop-authorization-fivem-v2", '-f ./Dockerfile')
             }
           }
         }
