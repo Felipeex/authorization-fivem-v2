@@ -21,8 +21,6 @@ async function handleAuthorization(
   const { KeymasterId, hwid, script } = req.body as AuthorizationProps;
   const clientIPPerExpress = /* req.ip */ "167.250.175.165";
 
-  console.log(clientIPPerExpress);
-
   if (!KeymasterId || !hwid || !script)
     return res.send({
       message: "^1ERROR: Todos campos precisa ser preenchido.",
@@ -178,7 +176,6 @@ router.post(
   handleAuthorization,
   async (req: Request, res: Response) => {
     const { product } = req.body.product as ProductType;
-    console.log(product)
     res.send({
       message: "Autenticado!",
       clients: await Promise.all(

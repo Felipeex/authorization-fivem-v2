@@ -43,6 +43,7 @@ model Consumer {
   ip                  String                @unique()
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
+  discordId           String?               @unique
   ConsumersOnProducts ConsumersOnProducts[]
 }
 
