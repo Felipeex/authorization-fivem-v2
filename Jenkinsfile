@@ -2,20 +2,12 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
-            steps {
-                echo 'Building..'
+        stage ("Build Image") {
+          steps {
+            script {
+              dockerapp = docker.build("felipeex/fivem-shop-authorization-fivem-v2", '-f ./Dockerfile ./')
             }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-            }
+          }
         }
     }
 }
