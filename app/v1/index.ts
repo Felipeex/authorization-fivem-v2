@@ -7,3 +7,4 @@ router.use("/authorization", Authorization);
 router.use("/user", User);
 
 export { router as V1 };
+

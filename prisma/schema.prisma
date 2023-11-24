@@ -32,6 +32,7 @@ model Product {
   id                  String                @unique @default(cuid())
   name                String
   version             String                @default("1.0.0")
+  fxmanifest          String?               @db.Text
   files               File[]
   ConsumersOnProducts ConsumersOnProducts[]
 }
@@ -42,6 +43,7 @@ model Consumer {
   ip                  String                @unique()
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
+  discordId           String?               @unique
   ConsumersOnProducts ConsumersOnProducts[]
 }
 
@@ -67,5 +69,5 @@ model File {
   id        String   @unique @default(cuid())
   name      String
   side      sideFile
-  code      String
+  code      String   @db.LongText
 }

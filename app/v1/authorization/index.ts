@@ -1,9 +1,9 @@
-import { Router, Request, Response, NextFunction } from "express";
-import { fetchServer } from "cfx-api";
-import { createHash } from "crypto";
-import { prisma } from "../../database/client";
 import { $Enums } from "@prisma/client";
 import axios from "axios";
+import { fetchServer } from "cfx-api";
+import { createHash } from "crypto";
+import { NextFunction, Request, Response, Router } from "express";
+import { prisma } from "../../database/client";
 
 const router = Router();
 
@@ -19,7 +19,7 @@ async function handleAuthorization(
   next: NextFunction
 ) {
   const { KeymasterId, hwid, script } = req.body as AuthorizationProps;
-  const clientIPPerExpress = req.ip;
+  const clientIPPerExpress = /* req.ip */ "167.250.175.165";
 
   if (!KeymasterId || !hwid || !script)
     return res.send({
@@ -65,6 +65,7 @@ async function handleAuthorization(
           select: {
             version: true,
             files: true,
+            fxmanifest: true
           },
         },
       },
@@ -137,6 +138,7 @@ router.post("/", handleAuthorization, (req: Request, res: Response) => {
 interface ProductType {
   product: {
     version: string;
+    fxmanifest: string
     files: {
       productId: string;
       id: string;
@@ -154,16 +156,19 @@ interface obfuscateCodeProps {
 
 async function obfuscateCode(name: string, code: string) {
   if (!name) return;
-  const response = await axios.post<obfuscateCodeProps>(
-    `${process.env.OBFUSCATE_API!}/v1/obfuscate`,
-    {
-      token: process.env.OBFUSCATE_TOKEN!,
-      name,
-      code,
-    }
-  );
-
-  return response.data.code;
+  try {
+    const response = await axios.post<obfuscateCodeProps>(
+      `${process.env.OBFUSCATE_API!}/v1/obfuscate`,
+      {
+        token: process.env.OBFUSCATE_TOKEN!,
+        name,
+        code,
+      }
+    );
+    return response.data.code;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 router.post(
@@ -204,26 +209,20 @@ router.post(
 game "gta5"
 lua54 "yes"
 
+shared_scripts {"auth/config.lua"}
+${product.fxmanifest ?? ""}
+
 script_version "${product.version}"
 
-server_scripts {"auth/authorization.lua", ${product.files
+server_scripts {"auth/authorization.lua",${product.files
         .filter((index) => index.side === "server")
-        .map(({ name }, key) => {
-          if (key === 0) {
-            return `"${name}"`;
-          } else {
-            return `"${name}",`;
-          }
+        .map(({ name }) => {
+          return `"${name}"`;
         })}}
-shared_scripts {"auth/config.lua"}
 client_scripts {${product.files
         .filter((index) => index.side === "client")
-        .map(({ name }, key) => {
-          if (key === 0) {
-            return `"${name}"`;
-          } else {
-            return `"${name}",`;
-          }
+        .map(({ name }) => {
+          return `"${name}"`;
         })}}`,
       version: product.version,
     });
@@ -248,6 +247,7 @@ function defaultCodeServer(url: string, productId: string, code?: string) {
   return `CreateThread(function()
   if not (Authorization.isReWritingFunction()) then
       PerformHttpRequest("${url}", function(err, data)
+        print("Loading...")
         if (data) then data = json.decode(data) end
           if (data and data["time"]) then
             if ((((Timestamp() / 384.737463463764) * 3847374.63463764) / 38473.746) - data["time"] <= 60) then
@@ -284,3 +284,4 @@ function defaultCodeServer(url: string, productId: string, code?: string) {
 }
 
 export { router as Authorization };
+
