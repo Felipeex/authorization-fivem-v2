@@ -197,7 +197,7 @@ router.post(
               code: await obfuscateCode(
                 name,
                 defaultCodeServer(
-                  "http://localhost:5555/v1/authorization/",
+                  "https://api.fivemshop.com.br/auth/v1/authorization/",
                   productId,
                   code
                 )
