@@ -6,7 +6,7 @@ import {
   UserjwtVerifySchema,
 } from "../../utils/user-jwt-verify";
 import { ValidateSchema } from "../../utils/validate-schema";
-const router = Router();
+const router = Router()
 
 const productSchema = z.object({
   body: z.object({
