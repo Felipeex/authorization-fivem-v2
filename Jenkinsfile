@@ -13,6 +13,7 @@ pipeline {
         stage ("Deploy") {
           steps {
             script {
+              sh 'docker system prune -af'
               sh 'docker compose up -d'
               sh 'docker compose ps --format json'
               sh 'docker image prune -f'
