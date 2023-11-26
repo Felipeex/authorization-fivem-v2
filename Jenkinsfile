@@ -13,7 +13,6 @@ pipeline {
         stage ("Deploy") {
           steps {
             script {
-              sh 'docker compose down'
               sh 'docker compose up -d'
               sh 'docker compose ps --format json'
               sh 'docker image prune -f'
@@ -21,4 +20,10 @@ pipeline {
           }
         }
     }
+
+    post {
+      always {
+         sh "docker-compose down || true"
+      }
+   }
 }
