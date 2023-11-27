@@ -19,7 +19,11 @@ async function handleAuthorization(
   next: NextFunction
 ) {
   const { KeymasterId, hwid, script } = req.body as AuthorizationProps;
-  const clientIPPerExpress = /* req.ip */ "167.250.175.165";
+  const clientIPPerExpress = req.ip;
+
+  console.log(clientIPPerExpress)
+
+  console.log(req)
 
   if (!KeymasterId || !hwid || !script)
     return res.send({
