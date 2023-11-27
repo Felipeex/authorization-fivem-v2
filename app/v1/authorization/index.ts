@@ -19,7 +19,7 @@ async function handleAuthorization(
   next: NextFunction
 ) {
   const { KeymasterId, hwid, script } = req.body as AuthorizationProps;
-  const clientIPPerExpress = /* req.ip */ req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const clientIPPerExpress = req.ip;
 
   console.log(clientIPPerExpress)
 
@@ -35,7 +35,7 @@ async function handleAuthorization(
     const server = await fetchServer(KeymasterId);
 
     const isExistIp = server?.data.connectEndPoints.map((ip) => {
-      if (ip.startsWith(clientIPPerExpress as string)) return true;
+      if (ip.startsWith(clientIPPerExpress)) return true;
     });
 
     if (!isExistIp) {
@@ -47,7 +47,7 @@ async function handleAuthorization(
     }
 
     const findIp = await prisma.consumer.findUnique({
-      where: { ip: clientIPPerExpress as string },
+      where: { ip: clientIPPerExpress },
     });
 
     if (!findIp)
