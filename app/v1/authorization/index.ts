@@ -21,6 +21,8 @@ async function handleAuthorization(
   const { KeymasterId, hwid, script } = req.body as AuthorizationProps;
   const clientIPPerExpress = req.ip;
 
+  console.log(clientIPPerExpress)
+
   if (!KeymasterId || !hwid || !script)
     return res.send({
       message: "^1ERROR: Todos campos precisa ser preenchido.",
@@ -31,12 +33,11 @@ async function handleAuthorization(
     const server = await fetchServer(KeymasterId);
 
     const isExistIp = server?.data.connectEndPoints.map((ip) => {
-      if (ip === clientIPPerExpress) return true;
-    });
+      const ipWithoutPort = ip.split(":")[0]
+      if (ipWithoutPort === clientIPPerExpress) return true
+    }) as Array<any>;
 
-    console.log(isExistIp)
-
-    if (!isExistIp) {
+    if (!isExistIp[0]) {
       return res.send({
         message:
           '^1ERROR: Seu IP não está batendo com seu "KeymasterId", atualize-o',
