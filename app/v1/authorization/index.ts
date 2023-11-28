@@ -21,8 +21,6 @@ async function handleAuthorization(
   const { KeymasterId, hwid, script } = req.body as AuthorizationProps;
   const clientIPPerExpress = req.ip;
 
-  console.log(clientIPPerExpress)
-
   if (!KeymasterId || !hwid || !script)
     return res.send({
       message: "^1ERROR: Todos campos precisa ser preenchido.",
