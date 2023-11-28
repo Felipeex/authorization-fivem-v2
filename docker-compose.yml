@@ -1,8 +1,8 @@
 version: '3'
 services:
   app:
+    build: .
     container_name: authorization-fivem-v2
-    image: felipeex/fivem-shop-authorization-fivem-v2:latest
     restart: always
     ports:
       - "5555:5555"

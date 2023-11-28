@@ -1,12 +1,12 @@
 import { Request, Response, Router } from "express";
+import { z } from "zod";
+import { prisma } from "../../../database/client";
 import {
   UserjwtVerify,
   UserjwtVerifySchema,
 } from "../../utils/user-jwt-verify";
-import { z } from "zod";
 import { ValidateSchema } from "../../utils/validate-schema";
-import { prisma } from "../../../database/client";
-const router = Router();
+const router = Router()
 
 const productSchema = z.object({
   body: z.object({
@@ -60,7 +60,7 @@ type findProductType = z.infer<typeof findProductSchema> &
 
 router.get("/download/:id", async (req: Request, res: Response) => {
   res.download(
-    __dirname + "/default-script/script.zip",
+    "./public/default-script/script.zip",
     req.params.id + ".zip"
   );
 });
@@ -226,3 +226,4 @@ router.delete("/:id", UserjwtVerify, async (req: Request, res: Response) => {
 });
 
 export { router as Product };
+

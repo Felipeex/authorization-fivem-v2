@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { Request, Response, Router } from "express";
 import { z } from "zod";
 import { prisma } from "../../../database/client";
@@ -59,6 +60,48 @@ router.get(
   }
 );
 
+const createConsumerSchema = z.object({
+  body: z.object({
+    id: z.string({ required_error: "id is required" }),
+  }),
+});
+
+type createConsumerType = z.infer<typeof createConsumerSchema> &
+  Omit<Request, "body">;
+
+router.post(
+  "/consumer",
+  ValidateSchema(createConsumerSchema),
+  async (req: Request, res: Response) => {
+    const {
+      body: { id },
+    } = req as createConsumerType;
+
+    try {
+      const findConsumer = await prisma.consumer.findUnique({
+        where: {
+          discordId: id
+        }
+      })
+
+      if (!findConsumer) {
+        const created = await prisma.consumer.create({
+          data: {
+            discordId: id,
+            ip: randomUUID()
+          }
+        })
+
+        return res.send(created).status(201)
+      }
+    } catch (err: any) {
+      console.log(err);
+      if (err && err.message) {
+        return res.status(400).send({ message: err.message });
+      }
+    }
+  })
+
 const createProductSchema = z.object({
   body: z.object({
     id: z.string({ required_error: "id is required" }),
@@ -79,51 +122,49 @@ router.post(
     } = req as createProductType;
 
     try {
+      console.log(id, productId)
       const findConsumerByIp = await prisma.consumer.findUnique({
         where: {
           ip
         }
       })
 
-      if (findConsumerByIp) return res.sendStatus(409)
+      if (findConsumerByIp && id !== findConsumerByIp.discordId) return res.sendStatus(409)
 
-      const findConsumer = await prisma.consumer.findUnique({
+      var findConsumer = await prisma.consumer.findUnique({
         where: {
           discordId: id
         }
       })
 
-      if (findConsumer) {
-        const findConsumerOnProduct = await prisma.consumersOnProducts.findUnique({
+      if (!findConsumer) {
+        const created = await prisma.consumer.create({
+          data: {
+            discordId: id,
+            ip
+          }
+        })
+
+        findConsumer = created
+      }
+
+      const findConsumerOnProduct = await prisma.consumersOnProducts.findUnique({
           where: {
+            consumerId: findConsumer.id,
+            productId,
             consumerId_productId: {
               consumerId: findConsumer.id,
-              productId,
+              productId
             }
           }
         })
 
-        if (findConsumerOnProduct) return res.send(200);
-      }
+      if (findConsumerOnProduct) return res.send(200);
 
       const createConsumerOrInsertProductInConsumer = await prisma.consumersOnProducts.create({
         data: {
-          product: {
-            connect: {
-              id: productId
-            }
-          },
-          consumer: {
-            connectOrCreate: {
-              where: {
-                discordId: id
-              },
-              create: {
-                discordId: id,
-                ip
-              }
-            }
-          }
+          consumerId: findConsumer.id,
+          productId,
         }
       })
 

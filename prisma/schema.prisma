@@ -27,7 +27,7 @@ model Plan {
 }
 
 model Product {
-  owner               User                  @relation(fields: [ownerId], references: [id])
+  owner               User                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId             String
   id                  String                @unique @default(cuid())
   name                String
@@ -48,8 +48,8 @@ model Consumer {
 }
 
 model ConsumersOnProducts {
-  consumer Consumer @relation(fields: [consumerId], references: [id])
-  product  Product  @relation(fields: [productId], references: [id])
+  consumer Consumer @relation(fields: [consumerId], references: [id], onDelete: Cascade)
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   consumerId String
   productId  String
