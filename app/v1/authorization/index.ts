@@ -31,8 +31,10 @@ async function handleAuthorization(
     const server = await fetchServer(KeymasterId);
 
     const isExistIp = server?.data.connectEndPoints.map((ip) => {
-      if (ip.startsWith(clientIPPerExpress)) return true;
+      if (ip === clientIPPerExpress) return true;
     });
+
+    console.log(isExistIp)
 
     if (!isExistIp) {
       return res.send({
