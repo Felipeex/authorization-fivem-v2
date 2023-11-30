@@ -21,8 +21,6 @@ async function handleAuthorization(
   const { KeymasterId, hwid, script } = req.body as AuthorizationProps;
   const clientIPPerExpress = req.ip;
 
-  console.log(clientIPPerExpress)
-
   if (!KeymasterId || !hwid || !script)
     return res.send({
       message: "^1ERROR: Todos campos precisa ser preenchido.",
@@ -83,6 +81,7 @@ async function handleAuthorization(
     req.body.product = findProduct;
     next();
   } catch (err) {
+    console.log(err)
     return res.send({
       message: '^1ERROR: Seu "KeymasterId" está incorreto.',
       version: "1.0.0",
@@ -124,6 +123,8 @@ router.post("/", handleAuthorization, (req: Request, res: Response) => {
       message: "^1ERROR: Tempo expirado (hash no found).",
       version: "1.0.0",
     });
+
+  console.log(Math.abs(currentDate.getTime() / 1000 - time + 10800) >= 60)
 
   if (Math.abs(currentDate.getTime() / 1000 - time + 10800) >= 60)
     return res.send({
