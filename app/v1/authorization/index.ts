@@ -124,7 +124,7 @@ router.post("/", handleAuthorization, (req: Request, res: Response) => {
       version: "1.0.0",
     });
 
-  console.log(Math.abs(currentDate.getTime() / 1000 - time + 10800) >= 60)
+  console.log(Math.abs(currentDate.getTime() / 1000 - time + 10800))
 
   if (Math.abs(currentDate.getTime() / 1000 - time + 10800) >= 60)
     return res.send({
